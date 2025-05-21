@@ -171,6 +171,11 @@
         <button data-sound="white">🌀 White Noise</button>
     </div>
 
+    <!-- Preloaded audio elements -->
+    <audio id="forestSound" src="forest.wav" preload="auto"></audio>
+    <audio id="oceanSound" src="ocean.wav" preload="auto"></audio>
+    <audio id="whiteSound" src="white.wav" preload="auto"></audio>
+
     <script>
         // ===== ENHANCED AUDIO ENGINE =====
         class BinauralTherapy {
@@ -211,11 +216,11 @@
                 this.ambienceBuffers = {};
                 this.ambienceSource = null;
                 
-                // Sound URLs (high-quality, seamless loops)
-                this.ambienceUrls = {
-                    forest: 'https://assets.mixkit.co/sfx/preview/mixkit-rain-forest-loop-1246.mp3',
-                    ocean: 'https://assets.mixkit.co/sfx/preview/mixkit-waves-coming-to-shore-1864.mp3',
-                    white: 'https://assets.mixkit.co/sfx/preview/mixkit-wind-in-the-trees-1773.mp3'
+                // Audio elements for local files
+                this.audioElements = {
+                    forest: document.getElementById('forestSound'),
+                    ocean: document.getElementById('oceanSound'),
+                    white: document.getElementById('whiteSound')
                 };
                 
                 // Connect audio graph
@@ -238,46 +243,35 @@
                 // Start spatial movement
                 this.startSpatialMovement();
                 
-                // Load all ambience tracks
-                this.loadAllAmbience();
-                
                 // Initialize timer
                 this.updateTimer();
-            }
-            
-            async loadAllAmbience() {
-                for (const [name, url] of Object.entries(this.ambienceUrls)) {
-                    try {
-                        const response = await fetch(url);
-                        const arrayBuffer = await response.arrayBuffer();
-                        this.ambienceBuffers[name] = await this.audioContext.decodeAudioData(arrayBuffer);
-                    } catch (e) {
-                        console.warn(`Failed to load ${name} ambience:`, e);
-                    }
-                }
             }
             
             setAmbience(type) {
                 const now = this.audioContext.currentTime;
                 
-                // Fade out current ambience
+                // Stop current ambience
                 if (this.ambienceSource) {
                     this.ambienceGain.gain.setTargetAtTime(0, now, 0.5);
-                    this.ambienceSource.stop(now + 0.5);
+                    this.ambienceSource.disconnect();
+                    this.audioElements[this.currentAmbience].pause();
                 }
                 
                 // Start new ambience if selected
-                if (type && this.ambienceBuffers[type]) {
+                if (type && this.audioElements[type]) {
                     this.currentAmbience = type;
-                    this.ambienceSource = this.audioContext.createBufferSource();
-                    this.ambienceSource.buffer = this.ambienceBuffers[type];
-                    this.ambienceSource.loop = true;
+                    const element = this.audioElements[type];
+                    element.loop = true;
+                    
+                    // Create a media element source
+                    this.ambienceSource = this.audioContext.createMediaElementSource(element);
                     this.ambienceSource.connect(this.ambienceGain);
                     
                     // Smooth fade in
                     this.ambienceGain.gain.setValueAtTime(0, now);
-                    this.ambienceGain.gain.setTargetAtTime(0.1, now, 1.5); // 10% volume
-                    this.ambienceSource.start(now);
+                    this.ambienceGain.gain.setTargetAtTime(0.1, now, 1.5);
+                    element.currentTime = 0;
+                    element.play();
                 } else {
                     this.currentAmbience = null;
                 }
