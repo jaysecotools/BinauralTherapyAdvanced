@@ -169,6 +169,7 @@
         <button data-sound="forest">🌲 Forest</button>
         <button data-sound="ocean">🌊 Ocean</button>
         <button data-sound="white">🌀 White Noise</button>
+        <button data-sound="off">❌ Turn Off</button>
     </div>
 
     <!-- Preloaded audio elements -->
@@ -254,11 +255,11 @@
                 if (this.ambienceSource) {
                     this.ambienceGain.gain.setTargetAtTime(0, now, 0.5);
                     this.ambienceSource.disconnect();
-                    this.audioElements[this.currentAmbience].pause();
+                    this.audioElements[this.currentAmbience]?.pause();
                 }
                 
-                // Start new ambience if selected
-                if (type && this.audioElements[type]) {
+                // Start new ambience if selected (and not 'off')
+                if (type && type !== 'off' && this.audioElements[type]) {
                     this.currentAmbience = type;
                     const element = this.audioElements[type];
                     element.loop = true;
@@ -274,6 +275,10 @@
                     element.play();
                 } else {
                     this.currentAmbience = null;
+                    // Update toggle icon to default when turned off
+                    if (type === 'off') {
+                        document.getElementById('ambienceToggle').textContent = '🌿';
+                    }
                 }
             }
             
@@ -644,16 +649,22 @@
                 btn.addEventListener('click', () => {
                     // Set active state
                     ambienceMenu.querySelectorAll('button').forEach(b => b.classList.remove('active'));
-                    btn.classList.add('active');
+                    
+                    // If not turning off, set active class
+                    if (btn.dataset.sound !== 'off') {
+                        btn.classList.add('active');
+                    }
                     
                     // Change ambience
                     const soundType = btn.dataset.sound;
                     audioTherapy.setAmbience(soundType);
                     
-                    // Update toggle icon
-                    ambienceToggle.textContent = 
-                        soundType === 'forest' ? '🌲' :
-                        soundType === 'ocean' ? '🌊' : '🌀';
+                    // Update toggle icon (only if not turning off)
+                    if (soundType !== 'off') {
+                        ambienceToggle.textContent = 
+                            soundType === 'forest' ? '🌲' :
+                            soundType === 'ocean' ? '🌊' : '🌀';
+                    }
                     
                     // Close menu after selection
                     ambienceMenu.style.display = 'none';
