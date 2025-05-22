@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -303,7 +304,7 @@
                 this.panner.refDistance = 1;
                 this.panner.maxDistance = 10000;
                 
-                // Oscillators
+                // Oscillators with smoother wave types
                 this.oscillators = {
                     left: this.audioContext.createOscillator(),
                     right: this.audioContext.createOscillator()
@@ -334,9 +335,14 @@
                 this.masterGain.connect(this.audioContext.destination);
                 this.ambienceGain.connect(this.audioContext.destination);
                 
-                // Configure oscillators
+                // Configure oscillators with smoother wave types
                 this.oscillators.left.type = 'sine';
                 this.oscillators.right.type = 'sine';
+                
+                // Add subtle detuning to reduce phase cancellation
+                this.oscillators.left.detune.value = 0.5;
+                this.oscillators.right.detune.value = -0.5;
+                
                 this.setFrequency();
                 
                 // Start oscillators
@@ -362,8 +368,14 @@
                 
                 // Stop current ambience
                 if (this.ambienceSource) {
+                    this.ambienceGain.gain.cancelScheduledValues(now);
                     this.ambienceGain.gain.setTargetAtTime(0, now, 0.5);
-                    this.ambienceSource.disconnect();
+                    setTimeout(() => {
+                        if (this.ambienceSource) {
+                            this.ambienceSource.disconnect();
+                            this.ambienceSource = null;
+                        }
+                    }, 500);
                     this.audioElements[this.currentAmbience]?.pause();
                 }
                 
@@ -373,16 +385,27 @@
                     const element = this.audioElements[type];
                     element.loop = true;
                     
-                    // Create a media element source
-                    this.ambienceSource = this.audioContext.createMediaElementSource(element);
-                    this.ambienceSource.connect(this.ambienceGain);
-                    
-                    // Smooth fade in
-                    this.ambienceGain.gain.setValueAtTime(0, now);
-                    this.ambienceGain.gain.setTargetAtTime(this.volume * 0.2, now, 1.5);
-                    element.currentTime = 0;
-                    element.volume = this.volume;
-                    element.play();
+                    try {
+                        // Create a media element source
+                        this.ambienceSource = this.audioContext.createMediaElementSource(element);
+                        this.ambienceSource.connect(this.ambienceGain);
+                        
+                        // Smooth fade in
+                        this.ambienceGain.gain.cancelScheduledValues(now);
+                        this.ambienceGain.gain.setValueAtTime(0, now);
+                        this.ambienceGain.gain.setTargetAtTime(this.volume * 0.2, now, 1.5);
+                        
+                        // Play the audio element
+                        const playPromise = element.play();
+                        
+                        if (playPromise !== undefined) {
+                            playPromise.catch(error => {
+                                console.error("Ambience playback failed:", error);
+                            });
+                        }
+                    } catch (error) {
+                        console.error("Error setting ambience:", error);
+                    }
                 } else {
                     this.currentAmbience = null;
                     // Update toggle icon to default when turned off
@@ -394,11 +417,14 @@
             
             setVolume(volume) {
                 this.volume = volume;
-                this.masterGain.gain.setTargetAtTime(volume, this.audioContext.currentTime, 0.1);
+                const now = this.audioContext.currentTime;
+                this.masterGain.gain.cancelScheduledValues(now);
+                this.masterGain.gain.setTargetAtTime(volume, now, 0.1);
                 
                 if (this.currentAmbience && this.audioElements[this.currentAmbience]) {
                     this.audioElements[this.currentAmbience].volume = volume;
-                    this.ambienceGain.gain.setTargetAtTime(volume * 0.2, this.audioContext.currentTime, 0.1);
+                    this.ambienceGain.gain.cancelScheduledValues(now);
+                    this.ambienceGain.gain.setTargetAtTime(volume * 0.2, now, 0.1);
                 }
             }
             
@@ -407,6 +433,9 @@
                 const now = this.audioContext.currentTime;
                 const freq = this.baseFrequencies[this.currentMode];
                 const delta = intensity * 2;
+                
+                this.oscillators.left.frequency.cancelScheduledValues(now);
+                this.oscillators.right.frequency.cancelScheduledValues(now);
                 
                 this.oscillators.left.frequency.setTargetAtTime(
                     freq.left - delta, 
@@ -450,12 +479,16 @@
                     
                     if (this.isPlaying) {
                         // Smooth fade out
-                        this.masterGain.gain.setTargetAtTime(0, this.audioContext.currentTime, 0.5);
+                        const now = this.audioContext.currentTime;
+                        this.masterGain.gain.cancelScheduledValues(now);
+                        this.masterGain.gain.setTargetAtTime(0, now, 0.5);
                         this.isPlaying = false;
                         this.updateTimer(false);
                     } else {
                         // Smooth fade in
-                        this.masterGain.gain.setTargetAtTime(this.volume, this.audioContext.currentTime, 1.0);
+                        const now = this.audioContext.currentTime;
+                        this.masterGain.gain.cancelScheduledValues(now);
+                        this.masterGain.gain.setTargetAtTime(this.volume, now, 1.0);
                         this.isPlaying = true;
                         this.sessionStart = this.sessionStart || this.audioContext.currentTime;
                         this.updateTimer(true);
