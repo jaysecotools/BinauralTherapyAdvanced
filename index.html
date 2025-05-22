@@ -1,9 +1,10 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Advanced Binaural Therapy | Brainwave Entrainment</title>
+    <title>Binaural Therapy App</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <style>
         body {
@@ -176,7 +177,6 @@
             overflow-y: auto;
             padding-right: 5px;
         }
-        /* Scrollbar styling */
         #modeSelector::-webkit-scrollbar {
             width: 5px;
         }
@@ -244,270 +244,7 @@
             margin-bottom: 10px;
             font-size: 12px;
         }
-    </style>
-</head>
-<body>
-    <div id="statusBar"></div>
-    <div id="timer"></div>
-    <div id="canvas"></div>
-    
-    <div id="controls">
-        <div id="modeSelector">
-            <button class="mode-btn" data-mode="gamma" data-freq="40">
-                🚀 Gamma (40Hz) - Peak Focus
-                <span class="info-icon">ℹ️</span>
-            </button>
-            <button class="mode-btn" data-mode="beta" data-freq="18">
-                💡 Beta (18Hz) - Alert Concentration
-                <span class="info-icon">ℹ️</span>
-            </button>
-            <button class="mode-btn active" data-mode="alpha" data-freq="10">
-                ☁️ Alpha (10Hz) - Relaxed Awareness
-                <span class="info-icon">ℹ️</span>
-            </button>
-            <button class="mode-btn" data-mode="theta" data-freq="6">
-                🌙 Theta (6Hz) - Deep Meditation
-                <span class="info-icon">ℹ️</span>
-            </button>
-            <button class="mode-btn" data-mode="delta" data-freq="2">
-                💤 Delta (2Hz) - Deep Sleep
-                <span class="info-icon">ℹ️</span>
-            </button>
-        </div>
-        <button id="playButton">▶</button>
-    </div>
-    
-    <input type="range" id="volumeControl" min="0" max="1" step="0.01" value="0.5">
-    
-    <button id="ambienceToggle">🌿</button>
-    <div id="ambienceMenu">
-        <button data-sound="forest">🌲 Forest</button>
-        <button data-sound="ocean">🌊 Ocean</button>
-        <button data-sound="white">🌀 White Noise</button>
-        <button data-sound="off">❌ Turn Off</button>
-    </div>
-
-    <div class="brainwave-info" id="brainwaveInfo">
-        <button class="close-info">×</button>
-        <h3 id="infoTitle">Alpha Waves</h3>
-        <p id="infoDescription">8-13Hz: Associated with relaxed awareness, meditation, and reduced anxiety.</p>
-        <p><strong>Best for:</strong> Stress relief, light meditation, creativity</p>
-    </div>
-
-    <!-- Audio elements for local files -->
-    <audio id="forestSound" preload="auto" loop></audio>
-    <audio id="oceanSound" preload="auto" loop></audio>
-    <audio id="whiteSound" preload="auto" loop></audio>
-
-    <!-- File input container -->
-    <div id="fileInputContainer" class="file-input-container">
-        <div>
-            <label for="forestFile">Forest Sound:</label>
-            <input type="file" id="forestFile" accept=".wav,.mp3,.ogg">
-        </div>
-        <div>
-            <label for="oceanFile">Ocean Sound:</label>
-            <input type="file" id="oceanFile" accept=".wav,.mp3,.ogg">
-        </div>
-        <div>
-            <label for="whiteFile">White Noise:</label>
-            <input type="file" id="whiteFile" accept=".wav,.mp3,.ogg">
-        </div>
-    </div>
-
-    <script>
-        // ===== ENHANCED AUDIO ENGINE =====
-    <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Advanced Binaural Therapy | Brainwave Entrainment</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            overflow: hidden;
-            background: #000;
-            font-family: 'Arial', sans-serif;
-            color: white;
-            user-select: none;
-            touch-action: manipulation;
-        }
-        #canvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 1;
-        }
-        #controls {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 2;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 10px;
-            background: rgba(0, 0, 0, 0.7);
-            padding: 15px;
-            border-radius: 20px;
-            backdrop-filter: blur(10px);
-            transition: transform 0.3s;
-            width: 90%;
-            max-width: 400px;
-        }
-        #controls.hidden {
-            transform: translateX(-50%) translateY(120%);
-        }
-        #playButton {
-            position: relative;
-            background: rgba(255, 255, 255, 0.2);
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 70px;
-            height: 70px;
-            font-size: 24px;
-            cursor: pointer;
-            transition: all 0.3s;
-            box-shadow: 0 0 20px rgba(0, 150, 255, 0.5);
-        }
-        #playButton:hover {
-            background: rgba(255, 255, 255, 0.3);
-            box-shadow: 0 0 25px rgba(0, 200, 255, 0.7);
-        }
-        .mode-btn {
-            background: rgba(255, 255, 255, 0.1);
-            color: white;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            border-radius: 20px;
-            padding: 10px 15px;
-            cursor: pointer;
-            transition: all 0.3s;
-            width: 100%;
-            text-align: left;
-            margin: 5px 0;
-        }
-        .mode-btn:hover {
-            background: rgba(255, 255, 255, 0.2);
-        }
-        .mode-btn.active {
-            background: linear-gradient(90deg, rgba(0, 150, 255, 0.3), rgba(100, 0, 255, 0.3));
-            border-color: rgba(255, 255, 255, 0.5);
-            box-shadow: 0 0 15px rgba(0, 200, 255, 0.3);
-        }
-        #statusBar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 3px;
-            background: linear-gradient(90deg, #4fc3f7, #7b1fa2);
-            transform-origin: left;
-            transform: scaleX(0);
-            transition: transform 0.5s;
-            z-index: 3;
-        }
-        #timer {
-            position: fixed;
-            top: 10px;
-            right: 15px;
-            font-size: 14px;
-            opacity: 0.7;
-            z-index: 2;
-            background: rgba(0, 0, 0, 0.5);
-            padding: 5px 10px;
-            border-radius: 15px;
-        }
-        #ambienceMenu {
-            position: fixed;
-            bottom: 100px;
-            right: 20px;
-            background: rgba(0, 0, 0, 0.8);
-            border-radius: 15px;
-            padding: 10px;
-            backdrop-filter: blur(10px);
-            z-index: 2;
-            display: none;
-            flex-direction: column;
-            gap: 8px;
-            width: 150px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        #ambienceMenu button {
-            background: none;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            color: white;
-            padding: 8px 12px;
-            border-radius: 20px;
-            cursor: pointer;
-            transition: all 0.2s;
-            font-size: 14px;
-            text-align: left;
-        }
-        #ambienceMenu button:hover {
-            background: rgba(255, 255, 255, 0.1);
-        }
-        #ambienceMenu button.active {
-            background: rgba(255, 255, 255, 0.2);
-            border-color: rgba(255, 255, 255, 0.4);
-        }
-        #ambienceToggle {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.1);
-            border: none;
-            color: white;
-            cursor: pointer;
-            z-index: 2;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
-            transition: all 0.3s;
-        }
-        #ambienceToggle:hover {
-            background: rgba(255, 255, 255, 0.2);
-            transform: scale(1.1);
-        }
-        #volumeControl {
-            position: fixed;
-            bottom: 80px;
-            left: 20px;
-            z-index: 2;
-            width: 150px;
-            opacity: 0.8;
-        }
-        #modeSelector {
-            display: flex;
-            flex-direction: column;
-            width: 100%;
-            max-height: 200px;
-            overflow-y: auto;
-            padding-right: 5px;
-        }
-        /* Scrollbar styling */
-        #modeSelector::-webkit-scrollbar {
-            width: 5px;
-        }
-        #modeSelector::-webkit-scrollbar-track {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-        }
-        #modeSelector::-webkit-scrollbar-thumb {
-            background: rgba(255, 255, 255, 0.3);
-            border-radius: 10px;
-        }
-        .brainwave-info {
+        #startPrompt {
             position: fixed;
             top: 50%;
             left: 50%;
@@ -515,62 +252,23 @@
             background: rgba(0, 0, 0, 0.8);
             padding: 20px;
             border-radius: 15px;
-            max-width: 300px;
             text-align: center;
-            z-index: 10;
-            display: none;
-            backdrop-filter: blur(10px);
+            z-index: 100;
             border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-        .close-info {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: none;
-            border: none;
-            color: white;
-            font-size: 16px;
-            cursor: pointer;
-        }
-        .info-icon {
-            margin-left: 5px;
-            cursor: help;
-            font-size: 14px;
-            opacity: 0.7;
-        }
-        .file-input-container {
-            display: none;
-            position: fixed;
-            bottom: 180px;
-            right: 20px;
-            background: rgba(0, 0, 0, 0.8);
-            border-radius: 15px;
-            padding: 10px;
-            backdrop-filter: blur(10px);
-            z-index: 2;
-            flex-direction: column;
-            gap: 8px;
-            width: 150px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        .file-input-container label {
-            font-size: 12px;
-            margin-bottom: 5px;
-            display: block;
-        }
-        .file-input-container input[type="file"] {
-            width: 100%;
-            margin-bottom: 10px;
-            font-size: 12px;
         }
     </style>
 </head>
 <body>
+    <div id="startPrompt">
+        <h2>Binaural Therapy App</h2>
+        <p>Click anywhere to start audio</p>
+    </div>
+
     <div id="statusBar"></div>
     <div id="timer"></div>
     <div id="canvas"></div>
     
-    <div id="controls">
+    <div id="controls" class="hidden">
         <div id="modeSelector">
             <button class="mode-btn" data-mode="gamma" data-freq="40">
                 🚀 Gamma (40Hz) - Peak Focus
@@ -638,46 +336,14 @@
         // ===== ENHANCED AUDIO ENGINE =====
         class BinauralTherapy {
             constructor() {
-                this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                this.audioContext = null;
                 this.currentMode = "alpha";
                 this.currentFrequency = 10;
                 this.isPlaying = false;
                 this.sessionStart = 0;
                 this.currentAmbience = null;
                 this.volume = 0.5;
-                
-                // Base frequencies for each brainwave state
-                this.baseFrequencies = {
-                    gamma: { left: 180, right: 220 },  // 40Hz difference
-                    beta: { left: 200, right: 218 },    // 18Hz difference
-                    alpha: { left: 200, right: 210 },   // 10Hz difference
-                    theta: { left: 200, right: 206 },   // 6Hz difference
-                    delta: { left: 200, right: 202 }     // 2Hz difference
-                };
-                
-                // Audio nodes
-                this.merger = this.audioContext.createChannelMerger(2);
-                this.panner = this.audioContext.createPanner();
-                this.panner.panningModel = 'HRTF';
-                this.panner.distanceModel = 'inverse';
-                this.panner.refDistance = 1;
-                this.panner.maxDistance = 10000;
-                
-                // Oscillators with smoother wave types
-                this.oscillators = {
-                    left: this.audioContext.createOscillator(),
-                    right: this.audioContext.createOscillator()
-                };
-                
-                // Master gain with smoother fade
-                this.masterGain = this.audioContext.createGain();
-                this.masterGain.gain.value = 0;
-                
-                // Ambience system
-                this.ambienceGain = this.audioContext.createGain();
-                this.ambienceGain.gain.value = 0;
-                this.ambienceBuffers = {};
-                this.ambienceSource = null;
+                this.audioInitialized = false;
                 
                 // Audio elements for local files
                 this.audioElements = {
@@ -686,66 +352,113 @@
                     white: document.getElementById('whiteSound')
                 };
                 
-                // Connect audio graph
-                this.oscillators.left.connect(this.merger, 0, 0);
-                this.oscillators.right.connect(this.merger, 0, 1);
-                this.merger.connect(this.panner);
-                this.panner.connect(this.masterGain);
-                this.masterGain.connect(this.audioContext.destination);
-                this.ambienceGain.connect(this.audioContext.destination);
+                // Initialize audio on first user interaction
+                this.initAudio = this.initAudio.bind(this);
+            }
+            
+            async initAudio() {
+                if (this.audioInitialized) return;
                 
-                // Configure oscillators with smoother wave types
-                this.oscillators.left.type = 'sine';
-                this.oscillators.right.type = 'sine';
-                
-                // Add subtle detuning to reduce phase cancellation
-                this.oscillators.left.detune.value = 0.5;
-                this.oscillators.right.detune.value = -0.5;
-                
-                this.setFrequency();
-                
-                // Start oscillators
-                this.oscillators.left.start();
-                this.oscillators.right.start();
-                
-                // Start spatial movement
-                this.startSpatialMovement();
-                
-                // Initialize timer
-                this.updateTimer();
-                
-                // Try to load default local files
-                this.loadDefaultLocalFiles();
+                try {
+                    // Create audio context
+                    this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                    this.audioInitialized = true;
+                    console.log("Audio context initialized");
+                    
+                    // Remove start prompt
+                    document.getElementById('startPrompt').style.display = 'none';
+                    
+                    // Base frequencies for each brainwave state
+                    this.baseFrequencies = {
+                        gamma: { left: 180, right: 220 },
+                        beta: { left: 200, right: 218 },
+                        alpha: { left: 200, right: 210 },
+                        theta: { left: 200, right: 206 },
+                        delta: { left: 200, right: 202 }
+                    };
+                    
+                    // Create audio nodes
+                    this.merger = this.audioContext.createChannelMerger(2);
+                    this.panner = this.audioContext.createPanner();
+                    this.panner.panningModel = 'HRTF';
+                    this.panner.distanceModel = 'inverse';
+                    this.panner.refDistance = 1;
+                    this.panner.maxDistance = 10000;
+                    
+                    // Oscillators
+                    this.oscillators = {
+                        left: this.audioContext.createOscillator(),
+                        right: this.audioContext.createOscillator()
+                    };
+                    
+                    // Master gain
+                    this.masterGain = this.audioContext.createGain();
+                    this.masterGain.gain.value = 0;
+                    
+                    // Ambience system
+                    this.ambienceGain = this.audioContext.createGain();
+                    this.ambienceGain.gain.value = 0;
+                    
+                    // Configure oscillators
+                    this.oscillators.left.type = 'sine';
+                    this.oscillators.right.type = 'sine';
+                    this.oscillators.left.detune.value = 0.5;
+                    this.oscillators.right.detune.value = -0.5;
+                    
+                    // Connect audio graph
+                    this.oscillators.left.connect(this.merger, 0, 0);
+                    this.oscillators.right.connect(this.merger, 0, 1);
+                    this.merger.connect(this.panner);
+                    this.panner.connect(this.masterGain);
+                    this.masterGain.connect(this.audioContext.destination);
+                    this.ambienceGain.connect(this.audioContext.destination);
+                    
+                    // Start oscillators
+                    this.oscillators.left.start();
+                    this.oscillators.right.start();
+                    
+                    // Start spatial movement
+                    this.startSpatialMovement();
+                    
+                    // Show controls
+                    document.getElementById('controls').classList.remove('hidden');
+                    
+                    // Try to load default local files
+                    await this.loadDefaultLocalFiles();
+                    
+                } catch (error) {
+                    console.error("Error initializing audio:", error);
+                    alert("Error initializing audio. Please check console for details.");
+                }
             }
             
             async loadDefaultLocalFiles() {
-                try {
-                    // Try to load files from root directory
-                    const audioFiles = {
-                        forest: 'forest.wav',
-                        ocean: 'ocean.wav',
-                        white: 'white.wav'
-                    };
-                    
-                    for (const [type, file] of Object.entries(audioFiles)) {
-                        try {
-                            const response = await fetch(file);
-                            if (response.ok) {
-                                const blob = await response.blob();
-                                const objectURL = URL.createObjectURL(blob);
-                                this.audioElements[type].src = objectURL;
-                                console.log(`Loaded ${type} sound from ${file}`);
-                            }
-                        } catch (e) {
-                            console.log(`Could not load default ${type} sound: ${file}`);
+                const soundFiles = [
+                    { type: 'forest', file: 'forest.wav' },
+                    { type: 'ocean', file: 'ocean.wav' },
+                    { type: 'white', file: 'white.wav' }
+                ];
+                
+                for (const {type, file} of soundFiles) {
+                    try {
+                        const response = await fetch(file);
+                        if (response.ok) {
+                            const blob = await response.blob();
+                            const objectURL = URL.createObjectURL(blob);
+                            this.audioElements[type].src = objectURL;
+                            console.log(`Loaded ${type} sound from ${file}`);
+                        } else {
+                            console.log(`Could not load ${file}: ${response.status}`);
                         }
+                    } catch (e) {
+                        console.log(`Error loading ${file}:`, e);
                     }
-                } catch (e) {
-                    console.log('Error loading default sound files:', e);
                 }
             }
             
             setMode(mode) {
+                if (!this.audioInitialized) return;
+                
                 this.currentMode = mode;
                 this.currentFrequency = parseInt(document.querySelector(`.mode-btn[data-mode="${mode}"]`).dataset.freq);
                 this.setFrequency();
@@ -753,6 +466,8 @@
             }
             
             setAmbience(type) {
+                if (!this.audioInitialized) return;
+                
                 const now = this.audioContext.currentTime;
                 
                 // Stop current ambience
@@ -803,7 +518,6 @@
                     }
                 } else {
                     this.currentAmbience = null;
-                    // Update toggle icon to default when turned off
                     if (type === 'off') {
                         document.getElementById('ambienceToggle').textContent = '🌿';
                     }
@@ -811,6 +525,8 @@
             }
             
             setVolume(volume) {
+                if (!this.audioInitialized) return;
+                
                 this.volume = volume;
                 const now = this.audioContext.currentTime;
                 this.masterGain.gain.cancelScheduledValues(now);
@@ -823,8 +539,9 @@
                 }
             }
             
-            // Smooth frequency transitions
             setFrequency(intensity = 0) {
+                if (!this.audioInitialized) return;
+                
                 const now = this.audioContext.currentTime;
                 const freq = this.baseFrequencies[this.currentMode];
                 const delta = intensity * 2;
@@ -844,17 +561,19 @@
                 );
             }
             
-            // Organic 8D motion
             startSpatialMovement() {
+                if (!this.audioInitialized) return;
+                
                 let angle = 0;
                 let radius = 3.0;
                 let intensity = 0;
                 
                 const moveSound = () => {
+                    if (!this.audioInitialized) return;
+                    
                     angle += 0.002 + (intensity * 0.001);
                     radius = 3.0 + (intensity * 2);
                     
-                    // Bézier-inspired path
                     const x = Math.cos(angle * 0.7) * radius + Math.sin(angle * 0.3) * 1.5;
                     const z = Math.sin(angle * 1.3) * radius + Math.cos(angle * 0.5) * 1.2;
                     const y = Math.sin(angle * 0.9) * (0.8 + intensity * 0.5);
@@ -867,6 +586,11 @@
             }
             
             async togglePlayback() {
+                if (!this.audioInitialized) {
+                    await this.initAudio();
+                    return;
+                }
+                
                 try {
                     if (this.audioContext.state === 'suspended') {
                         await this.audioContext.resume();
@@ -917,13 +641,11 @@
                 update();
             }
             
-            // Visual feedback for audio activity
             updateStatusBar(active) {
                 const statusBar = document.getElementById('statusBar');
                 if (active) {
                     const scale = 0.8 + 0.2 * Math.sin(this.audioContext.currentTime * (this.currentFrequency / 2));
                     
-                    // Set color based on brainwave state
                     let gradient;
                     switch(this.currentMode) {
                         case 'gamma':
@@ -974,24 +696,20 @@
                 this.renderer.setSize(window.innerWidth, window.innerHeight);
                 this.container.appendChild(this.renderer.domElement);
                 
-                // Breathing rhythm
                 this.breathPhase = 0;
                 this.breathSpeed = 0.01;
                 this.currentMode = 'alpha';
                 this.intensity = 0;
                 
-                // Create particle systems
                 this.orbParticles = this.createOrbParticles(5000);
                 this.galaxyParticles = this.createGalaxyParticles(10000);
                 
                 this.scene.add(this.orbParticles);
                 this.scene.add(this.galaxyParticles);
                 
-                // Ambient glow with mode colors
                 this.ambientLight = new THREE.AmbientLight(0x222244);
                 this.scene.add(this.ambientLight);
                 
-                // Start animation loop
                 this.renderer.setAnimationLoop(() => this.animate());
                 window.addEventListener('resize', () => this.onWindowResize());
             }
@@ -1002,7 +720,6 @@
                 const colors = new Float32Array(count * 3);
                 const sizes = new Float32Array(count);
                 
-                // Spherical distribution
                 for (let i = 0; i < count; i++) {
                     const radius = 5 * Math.random();
                     const theta = Math.random() * Math.PI * 2;
@@ -1012,7 +729,6 @@
                     positions[i * 3 + 1] = radius * Math.sin(phi) * Math.sin(theta);
                     positions[i * 3 + 2] = radius * Math.cos(phi);
                     
-                    // Initial blue-ish colors
                     colors[i * 3] = 0.3 + Math.random() * 0.7;
                     colors[i * 3 + 1] = 0.2 + Math.random() * 0.5;
                     colors[i * 3 + 2] = 0.7 + Math.random() * 0.3;
@@ -1048,7 +764,6 @@
                 const colors = new Float32Array(count * 3);
                 const sizes = new Float32Array(count);
                 
-                // Spiral galaxy
                 for (let i = 0; i < count; i++) {
                     const radius = 10 + Math.random() * 80;
                     const angle = Math.random() * Math.PI * 2;
@@ -1058,7 +773,6 @@
                     positions[i * 3 + 1] = (Math.random() - 0.5) * 20;
                     positions[i * 3 + 2] = radius * Math.sin(angle + spiral) * (0.8 + Math.random() * 0.4);
                     
-                    // Initial colors
                     colors[i * 3] = 0.5 + Math.random() * 0.5;
                     colors[i * 3 + 1] = 0.3 + Math.random() * 0.7;
                     colors[i * 3 + 2] = 0.5 + Math.random() * 0.5;
@@ -1091,7 +805,6 @@
                 this.currentMode = mode;
                 this.updateColors();
                 
-                // Adjust animation speed based on brainwave frequency
                 switch(mode) {
                     case 'gamma':
                         this.breathSpeed = 0.03;
@@ -1126,22 +839,21 @@
                 
                 let colorShiftR = 0, colorShiftG = 0, colorShiftB = 0;
                 
-                // Set color shifts based on brainwave state
                 switch(this.currentMode) {
                     case 'gamma':
-                        colorShiftR = 0.8; colorShiftG = 0.2; colorShiftB = 0.8; // Purple/pink
+                        colorShiftR = 0.8; colorShiftG = 0.2; colorShiftB = 0.8;
                         break;
                     case 'beta':
-                        colorShiftR = 0.2; colorShiftG = 0.8; colorShiftB = 0.2; // Green
+                        colorShiftR = 0.2; colorShiftG = 0.8; colorShiftB = 0.2;
                         break;
                     case 'alpha':
-                        colorShiftR = 0.3; colorShiftG = 0.5; colorShiftB = 0.8; // Blue
+                        colorShiftR = 0.3; colorShiftG = 0.5; colorShiftB = 0.8;
                         break;
                     case 'theta':
-                        colorShiftR = 0.7; colorShiftG = 0.3; colorShiftB = 0.7; // Purple
+                        colorShiftR = 0.7; colorShiftG = 0.3; colorShiftB = 0.7;
                         break;
                     case 'delta':
-                        colorShiftR = 0.4; colorShiftG = 0.1; colorShiftB = 0.5; // Deep purple
+                        colorShiftR = 0.4; colorShiftG = 0.1; colorShiftB = 0.5;
                         break;
                 }
                 
@@ -1160,7 +872,6 @@
                 this.orbParticles.geometry.attributes.color.needsUpdate = true;
                 this.galaxyParticles.geometry.attributes.color.needsUpdate = true;
                 
-                // Update ambient light color
                 let lightColor;
                 switch(this.currentMode) {
                     case 'gamma':
@@ -1180,11 +891,9 @@
             }
             
             animate() {
-                // Breathing rhythm
                 this.breathPhase += this.breathSpeed;
                 const breathScale = 1 + (0.3 + this.intensity * 0.2) * Math.sin(this.breathPhase);
                 
-                // Pulse orb particles
                 const positions = this.orbParticles.geometry.attributes.position.array;
                 const originalPositions = this.orbParticles.userData.originalPositions;
                 
@@ -1193,14 +902,12 @@
                 }
                 this.orbParticles.geometry.attributes.position.needsUpdate = true;
                 
-                // Breathing opacity effect
                 const opacity = 0.6 + (0.3 + this.intensity * 0.1) * Math.sin(this.breathPhase * 2);
                 this.orbParticles.material.opacity = opacity;
                 this.galaxyParticles.material.opacity = opacity * 0.8;
                 this.orbParticles.material.needsUpdate = true;
                 this.galaxyParticles.material.needsUpdate = true;
                 
-                // Rotate galaxy with intensity
                 this.galaxyParticles.rotation.y += 0.0005 + (this.intensity * 0.0003);
                 
                 this.renderer.render(this.scene, this.camera);
@@ -1217,27 +924,27 @@
         const brainwaveInfo = {
             gamma: {
                 title: "Gamma Waves (30-100Hz)",
-                description: "Associated with peak concentration, high-level cognition, and problem-solving. Gamma waves are present during intense focus and learning.",
+                description: "Associated with peak concentration, high-level cognition, and problem-solving.",
                 benefits: "Enhances cognitive processing, memory recall, and sensory perception."
             },
             beta: {
                 title: "Beta Waves (13-30Hz)",
-                description: "Present during normal waking consciousness and active thinking. Higher beta levels are associated with stress and anxiety.",
+                description: "Present during normal waking consciousness and active thinking.",
                 benefits: "Improves focus, alertness, and analytical thinking."
             },
             alpha: {
                 title: "Alpha Waves (8-13Hz)",
-                description: "Occur during relaxed states, light meditation, and daydreaming. The bridge between conscious and subconscious mind.",
+                description: "Occur during relaxed states, light meditation, and daydreaming.",
                 benefits: "Reduces stress, enhances creativity, and promotes relaxation."
             },
             theta: {
                 title: "Theta Waves (4-8Hz)",
-                description: "Present during deep meditation, REM sleep, and creative inspiration. Theta waves access the subconscious mind.",
+                description: "Present during deep meditation, REM sleep, and creative inspiration.",
                 benefits: "Deep meditation, enhanced intuition, and emotional healing."
             },
             delta: {
                 title: "Delta Waves (0.5-4Hz)",
-                description: "The slowest brainwaves, occurring in deep, dreamless sleep and healing states. Essential for physical restoration.",
+                description: "The slowest brainwaves, occurring in deep, dreamless sleep.",
                 benefits: "Promotes deep sleep, healing, and immune system functioning."
             }
         };
@@ -1263,7 +970,9 @@
             const audioTherapy = new BinauralTherapy();
             
             // Set initial volume
-            audioTherapy.setVolume(volumeControl.value);
+            volumeControl.addEventListener('input', () => {
+                audioTherapy.setVolume(volumeControl.value);
+            });
             
             // Play/pause button
             playButton.addEventListener('click', async () => {
@@ -1278,16 +987,13 @@
             // Mode selection
             document.querySelectorAll('.mode-btn').forEach(btn => {
                 btn.addEventListener('click', () => {
-                    // Set active state
                     document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
                     btn.classList.add('active');
                     
-                    // Change mode
                     const mode = btn.dataset.mode;
                     audioTherapy.setMode(mode);
                     visualizer.setMode(mode);
                     
-                    // Haptic feedback on mobile
                     if ('vibrate' in navigator) {
                         navigator.vibrate(10);
                     }
@@ -1355,96 +1061,29 @@
             // Ambience selection
             ambienceMenu.querySelectorAll('button').forEach(btn => {
                 btn.addEventListener('click', () => {
-                    // Set active state
                     ambienceMenu.querySelectorAll('button').forEach(b => b.classList.remove('active'));
                     
-                    // If not turning off, set active class
                     if (btn.dataset.sound !== 'off') {
                         btn.classList.add('active');
                     }
                     
-                    // Change ambience
                     const soundType = btn.dataset.sound;
                     audioTherapy.setAmbience(soundType);
                     
-                    // Update toggle icon (only if not turning off)
                     if (soundType !== 'off') {
                         ambienceToggle.textContent = 
                             soundType === 'forest' ? '🌲' :
                             soundType === 'ocean' ? '🌊' : '🌀';
                     }
                     
-                    // Close menu after selection
                     ambienceMenu.style.display = 'none';
                 });
             });
             
-            // Volume control
-            volumeControl.addEventListener('input', () => {
-                audioTherapy.setVolume(volumeControl.value);
-            });
-            
-            // Close menus when clicking elsewhere
-            document.addEventListener('click', (e) => {
-                if (!ambienceMenu.contains(e.target) && e.target !== ambienceToggle) {
-                    ambienceMenu.style.display = 'none';
-                }
-                if (!fileInputContainer.contains(e.target) && e.target !== ambienceToggle) {
-                    fileInputContainer.style.display = 'none';
-                }
-                if (!brainwaveInfoEl.contains(e.target) && !e.target.classList.contains('info-icon')) {
-                    brainwaveInfoEl.style.display = 'none';
-                }
-            });
-            
-            // Fullscreen on double tap
-            let lastTap = 0;
-            container.addEventListener('click', (e) => {
-                const currentTime = Date.now();
-                if (currentTime - lastTap < 300) {
-                    if (!document.fullscreenElement) {
-                        container.requestFullscreen().catch(err => {
-                            console.log(`Error attempting to enable fullscreen: ${err.message}`);
-                        });
-                    } else {
-                        document.exitFullscreen();
-                    }
-                }
-                lastTap = currentTime;
-            });
-            
-            // Start audio on first tap
-            const startOnTap = () => {
-                if (audioTherapy.audioContext.state === 'suspended') {
-                    audioTherapy.audioContext.resume().then(() => {
-                        playButton.textContent = '❚❚';
-                        audioTherapy.isPlaying = true;
-                        audioTherapy.updateStatusBar(true);
-                    });
-                }
-                document.body.removeEventListener('click', startOnTap);
-            };
-            document.body.addEventListener('click', startOnTap);
-            
-            // Keyboard controls
-            document.addEventListener('keydown', (e) => {
-                if (e.code === 'Space') {
-                    e.preventDefault();
-                    playButton.click();
-                } else if (e.code === 'KeyM') {
-                    // Cycle through modes
-                    const modes = ['gamma', 'beta', 'alpha', 'theta', 'delta'];
-                    const currentIndex = modes.indexOf(audioTherapy.currentMode);
-                    const nextIndex = (currentIndex + 1) % modes.length;
-                    document.querySelector(`.mode-btn[data-mode="${modes[nextIndex]}"]`).click();
-                } else if (e.code === 'KeyA') {
-                    ambienceToggle.click();
-                } else if (e.code === 'KeyV') {
-                    volumeControl.focus();
-                } else if (e.code === 'Escape') {
-                    brainwaveInfoEl.style.display = 'none';
-                }
-            });
+            // Initialize audio on first click
+            document.body.addEventListener('click', () => {
+                audioTherapy.initAudio();
+            }, { once: true });
             
             // Hide controls after inactivity
             let hideTimeout;
@@ -1459,691 +1098,6 @@
             document.addEventListener('mousemove', resetHideTimeout);
             document.addEventListener('touchmove', resetHideTimeout);
             resetHideTimeout();
-        });
-    </script>
-</body>
-</html>
-            
-            setMode(mode) {
-                this.currentMode = mode;
-                this.currentFrequency = parseInt(document.querySelector(`.mode-btn[data-mode="${mode}"]`).dataset.freq);
-                this.setFrequency();
-                this.updateStatusBar(this.isPlaying);
-            }
-            
-            setAmbience(type) {
-                const now = this.audioContext.currentTime;
-                
-                // Stop current ambience
-                if (this.ambienceSource) {
-                    this.ambienceGain.gain.cancelScheduledValues(now);
-                    this.ambienceGain.gain.setTargetAtTime(0, now, 0.5);
-                    setTimeout(() => {
-                        if (this.ambienceSource) {
-                            this.ambienceSource.disconnect();
-                            this.ambienceSource = null;
-                        }
-                    }, 500);
-                    this.audioElements[this.currentAmbience]?.pause();
-                }
-                
-                // Start new ambience if selected (and not 'off')
-                if (type && type !== 'off' && this.audioElements[type]) {
-                    this.currentAmbience = type;
-                    const element = this.audioElements[type];
-                    
-                    if (!element.src) {
-                        console.log(`No sound file loaded for ${type}`);
-                        return;
-                    }
-                    
-                    element.loop = true;
-                    
-                    try {
-                        // Create a media element source
-                        this.ambienceSource = this.audioContext.createMediaElementSource(element);
-                        this.ambienceSource.connect(this.ambienceGain);
-                        
-                        // Smooth fade in
-                        this.ambienceGain.gain.cancelScheduledValues(now);
-                        this.ambienceGain.gain.setValueAtTime(0, now);
-                        this.ambienceGain.gain.setTargetAtTime(this.volume * 0.2, now, 1.5);
-                        
-                        // Play the audio element
-                        const playPromise = element.play();
-                        
-                        if (playPromise !== undefined) {
-                            playPromise.catch(error => {
-                                console.error("Ambience playback failed:", error);
-                            });
-                        }
-                    } catch (error) {
-                        console.error("Error setting ambience:", error);
-                    }
-                } else {
-                    this.currentAmbience = null;
-                    // Update toggle icon to default when turned off
-                    if (type === 'off') {
-                        document.getElementById('ambienceToggle').textContent = '🌿';
-                    }
-                }
-            }
-            
-            setVolume(volume) {
-                this.volume = volume;
-                const now = this.audioContext.currentTime;
-                this.masterGain.gain.cancelScheduledValues(now);
-                this.masterGain.gain.setTargetAtTime(volume, now, 0.1);
-                
-                if (this.currentAmbience && this.audioElements[this.currentAmbience]) {
-                    this.audioElements[this.currentAmbience].volume = volume;
-                    this.ambienceGain.gain.cancelScheduledValues(now);
-                    this.ambienceGain.gain.setTargetAtTime(volume * 0.2, now, 0.1);
-                }
-            }
-            
-            // Smooth frequency transitions
-            setFrequency(intensity = 0) {
-                const now = this.audioContext.currentTime;
-                const freq = this.baseFrequencies[this.currentMode];
-                const delta = intensity * 2;
-                
-                this.oscillators.left.frequency.cancelScheduledValues(now);
-                this.oscillators.right.frequency.cancelScheduledValues(now);
-                
-                this.oscillators.left.frequency.setTargetAtTime(
-                    freq.left - delta, 
-                    now, 
-                    0.1
-                );
-                this.oscillators.right.frequency.setTargetAtTime(
-                    freq.right + delta, 
-                    now, 
-                    0.1
-                );
-            }
-            
-            // Organic 8D motion
-            startSpatialMovement() {
-                let angle = 0;
-                let radius = 3.0;
-                let intensity = 0;
-                
-                const moveSound = () => {
-                    angle += 0.002 + (intensity * 0.001);
-                    radius = 3.0 + (intensity * 2);
-                    
-                    // Bézier-inspired path
-                    const x = Math.cos(angle * 0.7) * radius + Math.sin(angle * 0.3) * 1.5;
-                    const z = Math.sin(angle * 1.3) * radius + Math.cos(angle * 0.5) * 1.2;
-                    const y = Math.sin(angle * 0.9) * (0.8 + intensity * 0.5);
-                    
-                    this.panner.setPosition(x, y, z);
-                    requestAnimationFrame(moveSound);
-                };
-                
-                moveSound();
-            }
-            
-            async togglePlayback() {
-                try {
-                    if (this.audioContext.state === 'suspended') {
-                        await this.audioContext.resume();
-                    }
-                    
-                    if (this.isPlaying) {
-                        // Smooth fade out
-                        const now = this.audioContext.currentTime;
-                        this.masterGain.gain.cancelScheduledValues(now);
-                        this.masterGain.gain.setTargetAtTime(0, now, 0.5);
-                        this.isPlaying = false;
-                        this.updateTimer(false);
-                    } else {
-                        // Smooth fade in
-                        const now = this.audioContext.currentTime;
-                        this.masterGain.gain.cancelScheduledValues(now);
-                        this.masterGain.gain.setTargetAtTime(this.volume, now, 1.0);
-                        this.isPlaying = true;
-                        this.sessionStart = this.sessionStart || this.audioContext.currentTime;
-                        this.updateTimer(true);
-                    }
-                    
-                    return this.isPlaying;
-                } catch (e) {
-                    console.warn("Playback error:", e);
-                    return false;
-                }
-            }
-            
-            updateTimer(running) {
-                const timerEl = document.getElementById('timer');
-                if (!running) {
-                    timerEl.textContent = '';
-                    return;
-                }
-                
-                const update = () => {
-                    if (!this.isPlaying) return;
-                    
-                    const seconds = Math.floor(this.audioContext.currentTime - this.sessionStart);
-                    const mins = Math.floor(seconds / 60);
-                    const secs = seconds % 60;
-                    timerEl.textContent = `${mins}:${secs < 10 ? '0' : ''}${secs}`;
-                    
-                    requestAnimationFrame(update);
-                };
-                
-                update();
-            }
-            
-            // Visual feedback for audio activity
-            updateStatusBar(active) {
-                const statusBar = document.getElementById('statusBar');
-                if (active) {
-                    const scale = 0.8 + 0.2 * Math.sin(this.audioContext.currentTime * (this.currentFrequency / 2));
-                    
-                    // Set color based on brainwave state
-                    let gradient;
-                    switch(this.currentMode) {
-                        case 'gamma':
-                            gradient = 'linear-gradient(90deg, #ff00ff, #00ffff)';
-                            break;
-                        case 'beta':
-                            gradient = 'linear-gradient(90deg, #00ff00, #ffff00)';
-                            break;
-                        case 'alpha':
-                            gradient = 'linear-gradient(90deg, #4fc3f7, #7b1fa2)';
-                            break;
-                        case 'theta':
-                            gradient = 'linear-gradient(90deg, #7b1fa2, #e91e63)';
-                            break;
-                        case 'delta':
-                            gradient = 'linear-gradient(90deg, #3a1c71, #d76d77)';
-                            break;
-                        default:
-                            gradient = 'linear-gradient(90deg, #4fc3f7, #7b1fa2)';
-                    }
-                    
-                    statusBar.style.transform = `scaleX(${scale})`;
-                    statusBar.style.background = gradient;
-                    requestAnimationFrame(() => this.updateStatusBar(true));
-                } else {
-                    statusBar.style.transform = 'scaleX(0)';
-                }
-            }
-        }
-
-        // ===== PARTICLE VISUALIZER =====
-        class ParticleVisualizer {
-            constructor(container) {
-                this.container = container;
-                this.scene = new THREE.Scene();
-                this.camera = new THREE.PerspectiveCamera(
-                    60, 
-                    window.innerWidth / window.innerHeight, 
-                    0.1, 
-                    1000
-                );
-                this.camera.position.z = 50;
-                
-                this.renderer = new THREE.WebGLRenderer({ 
-                    antialias: true,
-                    alpha: true
-                });
-                this.renderer.setSize(window.innerWidth, window.innerHeight);
-                this.container.appendChild(this.renderer.domElement);
-                
-                // Breathing rhythm
-                this.breathPhase = 0;
-                this.breathSpeed = 0.01;
-                this.currentMode = 'alpha';
-                this.intensity = 0;
-                
-                // Create particle systems
-                this.orbParticles = this.createOrbParticles(5000);
-                this.galaxyParticles = this.createGalaxyParticles(10000);
-                
-                this.scene.add(this.orbParticles);
-                this.scene.add(this.galaxyParticles);
-                
-                // Ambient glow with mode colors
-                this.ambientLight = new THREE.AmbientLight(0x222244);
-                this.scene.add(this.ambientLight);
-                
-                // Start animation loop
-                this.renderer.setAnimationLoop(() => this.animate());
-                window.addEventListener('resize', () => this.onWindowResize());
-            }
-            
-            createOrbParticles(count) {
-                const particles = new THREE.BufferGeometry();
-                const positions = new Float32Array(count * 3);
-                const colors = new Float32Array(count * 3);
-                const sizes = new Float32Array(count);
-                
-                // Spherical distribution
-                for (let i = 0; i < count; i++) {
-                    const radius = 5 * Math.random();
-                    const theta = Math.random() * Math.PI * 2;
-                    const phi = Math.acos(2 * Math.random() - 1);
-                    
-                    positions[i * 3] = radius * Math.sin(phi) * Math.cos(theta);
-                    positions[i * 3 + 1] = radius * Math.sin(phi) * Math.sin(theta);
-                    positions[i * 3 + 2] = radius * Math.cos(phi);
-                    
-                    // Initial blue-ish colors
-                    colors[i * 3] = 0.3 + Math.random() * 0.7;
-                    colors[i * 3 + 1] = 0.2 + Math.random() * 0.5;
-                    colors[i * 3 + 2] = 0.7 + Math.random() * 0.3;
-                    
-                    sizes[i] = 0.1 + Math.random() * 0.3;
-                }
-                
-                particles.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-                particles.setAttribute('color', new THREE.BufferAttribute(colors, 3));
-                particles.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
-                
-                const material = new THREE.PointsMaterial({
-                    size: 0.2,
-                    vertexColors: true,
-                    transparent: true,
-                    opacity: 0.7,
-                    blending: THREE.AdditiveBlending,
-                    sizeAttenuation: true
-                });
-                
-                const particleSystem = new THREE.Points(particles, material);
-                particleSystem.userData = {
-                    originalPositions: positions.slice(),
-                    originalColors: colors.slice()
-                };
-                
-                return particleSystem;
-            }
-            
-            createGalaxyParticles(count) {
-                const particles = new THREE.BufferGeometry();
-                const positions = new Float32Array(count * 3);
-                const colors = new Float32Array(count * 3);
-                const sizes = new Float32Array(count);
-                
-                // Spiral galaxy
-                for (let i = 0; i < count; i++) {
-                    const radius = 10 + Math.random() * 80;
-                    const angle = Math.random() * Math.PI * 2;
-                    const spiral = Math.random() * Math.PI * 4;
-                    
-                    positions[i * 3] = radius * Math.cos(angle + spiral) * (0.8 + Math.random() * 0.4);
-                    positions[i * 3 + 1] = (Math.random() - 0.5) * 20;
-                    positions[i * 3 + 2] = radius * Math.sin(angle + spiral) * (0.8 + Math.random() * 0.4);
-                    
-                    // Initial colors
-                    colors[i * 3] = 0.5 + Math.random() * 0.5;
-                    colors[i * 3 + 1] = 0.3 + Math.random() * 0.7;
-                    colors[i * 3 + 2] = 0.5 + Math.random() * 0.5;
-                    
-                    sizes[i] = 0.05 + Math.random() * 0.2;
-                }
-                
-                particles.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-                particles.setAttribute('color', new THREE.BufferAttribute(colors, 3));
-                particles.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
-                
-                const material = new THREE.PointsMaterial({
-                    size: 0.1,
-                    vertexColors: true,
-                    transparent: true,
-                    opacity: 0.7,
-                    blending: THREE.AdditiveBlending,
-                    sizeAttenuation: true
-                });
-                
-                const particleSystem = new THREE.Points(particles, material);
-                particleSystem.userData = {
-                    originalColors: colors.slice()
-                };
-                
-                return particleSystem;
-            }
-            
-            setMode(mode) {
-                this.currentMode = mode;
-                this.updateColors();
-                
-                // Adjust animation speed based on brainwave frequency
-                switch(mode) {
-                    case 'gamma':
-                        this.breathSpeed = 0.03;
-                        break;
-                    case 'beta':
-                        this.breathSpeed = 0.02;
-                        break;
-                    case 'alpha':
-                        this.breathSpeed = 0.015;
-                        break;
-                    case 'theta':
-                        this.breathSpeed = 0.01;
-                        break;
-                    case 'delta':
-                        this.breathSpeed = 0.005;
-                        break;
-                    default:
-                        this.breathSpeed = 0.01;
-                }
-            }
-            
-            setIntensity(intensity) {
-                this.intensity = intensity;
-                this.breathSpeed += (intensity * 0.005);
-            }
-            
-            updateColors() {
-                const orbColors = this.orbParticles.geometry.attributes.color.array;
-                const galaxyColors = this.galaxyParticles.geometry.attributes.color.array;
-                const origOrbColors = this.orbParticles.userData.originalColors;
-                const origGalaxyColors = this.galaxyParticles.userData.originalColors;
-                
-                let colorShiftR = 0, colorShiftG = 0, colorShiftB = 0;
-                
-                // Set color shifts based on brainwave state
-                switch(this.currentMode) {
-                    case 'gamma':
-                        colorShiftR = 0.8; colorShiftG = 0.2; colorShiftB = 0.8; // Purple/pink
-                        break;
-                    case 'beta':
-                        colorShiftR = 0.2; colorShiftG = 0.8; colorShiftB = 0.2; // Green
-                        break;
-                    case 'alpha':
-                        colorShiftR = 0.3; colorShiftG = 0.5; colorShiftB = 0.8; // Blue
-                        break;
-                    case 'theta':
-                        colorShiftR = 0.7; colorShiftG = 0.3; colorShiftB = 0.7; // Purple
-                        break;
-                    case 'delta':
-                        colorShiftR = 0.4; colorShiftG = 0.1; colorShiftB = 0.5; // Deep purple
-                        break;
-                }
-                
-                for (let i = 0; i < orbColors.length; i += 3) {
-                    orbColors[i] = origOrbColors[i] * (1 - colorShiftR) + colorShiftR;
-                    orbColors[i + 1] = origOrbColors[i + 1] * (1 - colorShiftG) + colorShiftG;
-                    orbColors[i + 2] = origOrbColors[i + 2] * (1 - colorShiftB) + colorShiftB;
-                }
-                
-                for (let i = 0; i < galaxyColors.length; i += 3) {
-                    galaxyColors[i] = origGalaxyColors[i] * (1 - colorShiftR) + colorShiftR;
-                    galaxyColors[i + 1] = origGalaxyColors[i + 1] * (1 - colorShiftG) + colorShiftG;
-                    galaxyColors[i + 2] = origGalaxyColors[i + 2] * (1 - colorShiftB) + colorShiftB;
-                }
-                
-                this.orbParticles.geometry.attributes.color.needsUpdate = true;
-                this.galaxyParticles.geometry.attributes.color.needsUpdate = true;
-                
-                // Update ambient light color
-                let lightColor;
-                switch(this.currentMode) {
-                    case 'gamma':
-                        lightColor = new THREE.Color(0x330066); break;
-                    case 'beta':
-                        lightColor = new THREE.Color(0x003300); break;
-                    case 'alpha':
-                        lightColor = new THREE.Color(0x000044); break;
-                    case 'theta':
-                        lightColor = new THREE.Color(0x220022); break;
-                    case 'delta':
-                        lightColor = new THREE.Color(0x110011); break;
-                    default:
-                        lightColor = new THREE.Color(0x000044);
-                }
-                this.ambientLight.color.copy(lightColor);
-            }
-            
-            animate() {
-                // Breathing rhythm
-                this.breathPhase += this.breathSpeed;
-                const breathScale = 1 + (0.3 + this.intensity * 0.2) * Math.sin(this.breathPhase);
-                
-                // Pulse orb particles
-                const positions = this.orbParticles.geometry.attributes.position.array;
-                const originalPositions = this.orbParticles.userData.originalPositions;
-                
-                for (let i = 0; i < positions.length; i++) {
-                    positions[i] = originalPositions[i] * breathScale;
-                }
-                this.orbParticles.geometry.attributes.position.needsUpdate = true;
-                
-                // Breathing opacity effect
-                const opacity = 0.6 + (0.3 + this.intensity * 0.1) * Math.sin(this.breathPhase * 2);
-                this.orbParticles.material.opacity = opacity;
-                this.galaxyParticles.material.opacity = opacity * 0.8;
-                this.orbParticles.material.needsUpdate = true;
-                this.galaxyParticles.material.needsUpdate = true;
-                
-                // Rotate galaxy with intensity
-                this.galaxyParticles.rotation.y += 0.0005 + (this.intensity * 0.0003);
-                
-                this.renderer.render(this.scene, this.camera);
-            }
-            
-            onWindowResize() {
-                this.camera.aspect = window.innerWidth / window.innerHeight;
-                this.camera.updateProjectionMatrix();
-                this.renderer.setSize(window.innerWidth, window.innerHeight);
-            }
-        }
-
-        // Brainwave information data
-        const brainwaveInfo = {
-            gamma: {
-                title: "Gamma Waves (30-100Hz)",
-                description: "Associated with peak concentration, high-level cognition, and problem-solving. Gamma waves are present during intense focus and learning.",
-                benefits: "Enhances cognitive processing, memory recall, and sensory perception."
-            },
-            beta: {
-                title: "Beta Waves (13-30Hz)",
-                description: "Present during normal waking consciousness and active thinking. Higher beta levels are associated with stress and anxiety.",
-                benefits: "Improves focus, alertness, and analytical thinking."
-            },
-            alpha: {
-                title: "Alpha Waves (8-13Hz)",
-                description: "Occur during relaxed states, light meditation, and daydreaming. The bridge between conscious and subconscious mind.",
-                benefits: "Reduces stress, enhances creativity, and promotes relaxation."
-            },
-            theta: {
-                title: "Theta Waves (4-8Hz)",
-                description: "Present during deep meditation, REM sleep, and creative inspiration. Theta waves access the subconscious mind.",
-                benefits: "Deep meditation, enhanced intuition, and emotional healing."
-            },
-            delta: {
-                title: "Delta Waves (0.5-4Hz)",
-                description: "The slowest brainwaves, occurring in deep, dreamless sleep and healing states. Essential for physical restoration.",
-                benefits: "Promotes deep sleep, healing, and immune system functioning."
-            }
-        };
-
-        // ===== MAIN APP =====
-        document.addEventListener('DOMContentLoaded', async () => {
-            const container = document.getElementById('canvas');
-            const playButton = document.getElementById('playButton');
-            const ambienceToggle = document.getElementById('ambienceToggle');
-            const ambienceMenu = document.getElementById('ambienceMenu');
-            const controls = document.getElementById('controls');
-            const volumeControl = document.getElementById('volumeControl');
-            const brainwaveInfoEl = document.getElementById('brainwaveInfo');
-            const infoTitle = document.getElementById('infoTitle');
-            const infoDescription = document.getElementById('infoDescription');
-            const fileInputContainer = document.getElementById('fileInputContainer');
-            const forestFileInput = document.getElementById('forestFile');
-            const oceanFileInput = document.getElementById('oceanFile');
-            const whiteFileInput = document.getElementById('whiteFile');
-            
-            // Initialize systems
-            const visualizer = new ParticleVisualizer(container);
-            const audioTherapy = new BinauralTherapy();
-            
-            // Set initial volume
-            audioTherapy.setVolume(volumeControl.value);
-            
-            // Play/pause button
-            playButton.addEventListener('click', async () => {
-                const isPlaying = await audioTherapy.togglePlayback();
-                playButton.textContent = isPlaying ? '❚❚' : '▶';
-                
-                if (isPlaying) {
-                    audioTherapy.updateStatusBar(true);
-                }
-            });
-            
-            // Mode selection
-            document.querySelectorAll('.mode-btn').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    // Set active state
-                    document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
-                    btn.classList.add('active');
-                    
-                    // Change mode
-                    const mode = btn.dataset.mode;
-                    audioTherapy.setMode(mode);
-                    visualizer.setMode(mode);
-                    
-                    // Haptic feedback on mobile
-                    if ('vibrate' in navigator) {
-                        navigator.vibrate(10);
-                    }
-                });
-            });
-            
-            // Info icons
-            document.querySelectorAll('.info-icon').forEach(icon => {
-                icon.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    const mode = icon.parentElement.dataset.mode;
-                    infoTitle.textContent = brainwaveInfo[mode].title;
-                    infoDescription.textContent = brainwaveInfo[mode].description + " " + brainwaveInfo[mode].benefits;
-                    brainwaveInfoEl.style.display = 'block';
-                });
-            });
-            
-            // Close info panel
-            document.querySelector('.close-info').addEventListener('click', () => {
-                brainwaveInfoEl.style.display = 'none';
-            });
-            
-            // Ambience menu toggle
-            ambienceToggle.addEventListener('click', (e) => {
-                e.stopPropagation();
-                ambienceMenu.style.display = ambienceMenu.style.display === 'flex' ? 'none' : 'flex';
-                fileInputContainer.style.display = 'none';
-            });
-            
-            // File input toggle
-            ambienceToggle.addEventListener('dblclick', (e) => {
-                e.stopPropagation();
-                fileInputContainer.style.display = fileInputContainer.style.display === 'flex' ? 'none' : 'flex';
-                ambienceMenu.style.display = 'none';
-            });
-            
-            // File input handlers
-            forestFileInput.addEventListener('change', (e) => {
-                const file = e.target.files[0];
-                if (file) {
-                    const url = URL.createObjectURL(file);
-                    audioTherapy.audioElements.forest.src = url;
-                    console.log('Forest sound file loaded:', file.name);
-                }
-            });
-            
-            oceanFileInput.addEventListener('change', (e) => {
-                const file = e.target.files[0];
-                if (file) {
-                    const url = URL.createObjectURL(file);
-                    audioTherapy.audioElements.ocean.src = url;
-                    console.log('Ocean sound file loaded:', file.name);
-                }
-            });
-            
-            whiteFileInput.addEventListener('change', (e) => {
-                const file = e.target.files[0];
-                if (file) {
-                    const url = URL.createObjectURL(file);
-                    audioTherapy.audioElements.white.src = url;
-                    console.log('White noise file loaded:', file.name);
-                }
-            });
-            
-            // Ambience selection
-            ambienceMenu.querySelectorAll('button').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    // Set active state
-                    ambienceMenu.querySelectorAll('button').forEach(b => b.classList.remove('active'));
-                    
-                    // If not turning off, set active class
-                    if (btn.dataset.sound !== 'off') {
-                        btn.classList.add('active');
-                    }
-                    
-                    // Change ambience
-                    const soundType = btn.dataset.sound;
-                    audioTherapy.setAmbience(soundType);
-                    
-                    // Update toggle icon (only if not turning off)
-                    if (soundType !== 'off') {
-                        ambienceToggle.textContent = 
-                            soundType === 'forest' ? '🌲' :
-                            soundType === 'ocean' ? '🌊' : '🌀';
-                    }
-                    
-                    // Close menu after selection
-                    ambienceMenu.style.display = 'none';
-                });
-            });
-            
-            // Volume control
-            volumeControl.addEventListener('input', () => {
-                audioTherapy.setVolume(volumeControl.value);
-            });
-            
-            // Close menus when clicking elsewhere
-            document.addEventListener('click', (e) => {
-                if (!ambienceMenu.contains(e.target) && e.target !== ambienceToggle) {
-                    ambienceMenu.style.display = 'none';
-                }
-                if (!fileInputContainer.contains(e.target) && e.target !== ambienceToggle) {
-                    fileInputContainer.style.display = 'none';
-                }
-                if (!brainwaveInfoEl.contains(e.target) && !e.target.classList.contains('info-icon')) {
-                    brainwaveInfoEl.style.display = 'none';
-                }
-            });
-            
-            // Fullscreen on double tap
-            let lastTap = 0;
-            container.addEventListener('click', (e) => {
-                const currentTime = Date.now();
-                if (currentTime - lastTap < 300) {
-                    if (!document.fullscreenElement) {
-                        container.requestFullscreen().catch(err => {
-                            console.log(`Error attempting to enable fullscreen: ${err.message}`);
-                        });
-                    } else {
-                        document.exitFullscreen();
-                    }
-                }
-                lastTap = currentTime;
-            });
-            
-            // Start audio on first tap
-            const startOnTap = () => {
-                if (audioTherapy.audioContext.state === 'suspended') {
-                    audioTherapy.audioContext.resume().then(() => {
-                        playButton.textContent = '❚❚';
-                        audioTherapy.isPlaying = true;
-                        audioTherapy.updateStatusBar(true);
-                    });
-                }
-                document.body.removeEventListener('click', startOnTap);
-            };
-            document.body.addEventListener('click', startOnTap);
             
             // Keyboard controls
             document.addEventListener('keydown', (e) => {
@@ -2151,7 +1105,6 @@
                     e.preventDefault();
                     playButton.click();
                 } else if (e.code === 'KeyM') {
-                    // Cycle through modes
                     const modes = ['gamma', 'beta', 'alpha', 'theta', 'delta'];
                     const currentIndex = modes.indexOf(audioTherapy.currentMode);
                     const nextIndex = (currentIndex + 1) % modes.length;
@@ -2164,20 +1117,6 @@
                     brainwaveInfoEl.style.display = 'none';
                 }
             });
-            
-            // Hide controls after inactivity
-            let hideTimeout;
-            const resetHideTimeout = () => {
-                clearTimeout(hideTimeout);
-                controls.classList.remove('hidden');
-                hideTimeout = setTimeout(() => {
-                    controls.classList.add('hidden');
-                }, 3000);
-            };
-            
-            document.addEventListener('mousemove', resetHideTimeout);
-            document.addEventListener('touchmove', resetHideTimeout);
-            resetHideTimeout();
         });
     </script>
 </body>
