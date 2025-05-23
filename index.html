@@ -904,7 +904,7 @@
                 
                 const opacity = 0.6 + (0.3 + this.intensity * 0.1) * Math.sin(this.breathPhase * 2);
                 this.orbParticles.material.opacity = opacity;
-                this.galaxyParticles.material.opacity = opacity * 0.8;
+                this.galaxyParticles.material.opacity = opacity * 0.3; // Galaxy particle opacity
                 this.orbParticles.material.needsUpdate = true;
                 this.galaxyParticles.material.needsUpdate = true;
                 
