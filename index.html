@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -343,6 +344,7 @@
                 this.currentAmbience = null;
                 this.volume = 0.5;
                 this.audioInitialized = false;
+                this.fadeTime = 0.5; // Time for fade in/out in seconds
                 
                 // Audio elements for local files
                 this.audioElements = {
@@ -384,13 +386,13 @@
                     this.panner.refDistance = 1;
                     this.panner.maxDistance = 10000;
                     
-                    // Oscillators
+                    // Oscillators with small random detune to prevent phase cancellation
                     this.oscillators = {
                         left: this.audioContext.createOscillator(),
                         right: this.audioContext.createOscillator()
                     };
                     
-                    // Master gain
+                    // Master gain with smoother transitions
                     this.masterGain = this.audioContext.createGain();
                     this.masterGain.gain.value = 0;
                     
@@ -398,18 +400,28 @@
                     this.ambienceGain = this.audioContext.createGain();
                     this.ambienceGain.gain.value = 0;
                     
-                    // Configure oscillators
+                    // Configure oscillators with smoother settings
                     this.oscillators.left.type = 'sine';
                     this.oscillators.right.type = 'sine';
-                    this.oscillators.left.detune.value = 0.5;
-                    this.oscillators.right.detune.value = -0.5;
+                    this.oscillators.left.detune.value = Math.random() * 2 - 1; // Small random detune
+                    this.oscillators.right.detune.value = Math.random() * 2 - 1; // Small random detune
                     
-                    // Connect audio graph
+                    // Connect audio graph with smoother routing
                     this.oscillators.left.connect(this.merger, 0, 0);
                     this.oscillators.right.connect(this.merger, 0, 1);
                     this.merger.connect(this.panner);
                     this.panner.connect(this.masterGain);
-                    this.masterGain.connect(this.audioContext.destination);
+                    
+                    // Create a limiter to prevent clipping
+                    this.limiter = this.audioContext.createDynamicsCompressor();
+                    this.limiter.threshold.value = -1;
+                    this.limiter.knee.value = 1;
+                    this.limiter.ratio.value = 12;
+                    this.limiter.attack.value = 0.003;
+                    this.limiter.release.value = 0.025;
+                    
+                    this.masterGain.connect(this.limiter);
+                    this.limiter.connect(this.audioContext.destination);
                     this.ambienceGain.connect(this.audioContext.destination);
                     
                     // Start oscillators
@@ -469,7 +481,7 @@
                 
                 const now = this.audioContext.currentTime;
                 
-                // Stop current ambience
+                // Stop current ambience with fade out
                 if (this.ambienceSource) {
                     this.ambienceGain.gain.cancelScheduledValues(now);
                     this.ambienceGain.gain.setTargetAtTime(0, now, 0.5);
@@ -529,7 +541,13 @@
                 this.volume = volume;
                 const now = this.audioContext.currentTime;
                 this.masterGain.gain.cancelScheduledValues(now);
-                this.masterGain.gain.setTargetAtTime(volume, now, 0.1);
+                
+                // Use exponential ramp for smoother volume changes
+                if (this.isPlaying) {
+                    this.masterGain.gain.setTargetAtTime(volume, now, 0.1);
+                } else {
+                    this.masterGain.gain.setValueAtTime(0, now);
+                }
                 
                 if (this.currentAmbience && this.audioElements[this.currentAmbience]) {
                     this.audioElements[this.currentAmbience].volume = volume;
@@ -545,18 +563,17 @@
                 const freq = this.baseFrequencies[this.currentMode];
                 const delta = intensity * 2;
                 
+                // Apply frequency changes with exponential ramp for smoother transitions
                 this.oscillators.left.frequency.cancelScheduledValues(now);
                 this.oscillators.right.frequency.cancelScheduledValues(now);
                 
-                this.oscillators.left.frequency.setTargetAtTime(
-                    freq.left - delta, 
-                    now, 
-                    0.1
+                this.oscillators.left.frequency.exponentialRampToValueAtTime(
+                    Math.max(1, freq.left - delta), // Ensure frequency never goes to 0
+                    now + 0.1
                 );
-                this.oscillators.right.frequency.setTargetAtTime(
-                    freq.right + delta, 
-                    now, 
-                    0.1
+                this.oscillators.right.frequency.exponentialRampToValueAtTime(
+                    Math.max(1, freq.right + delta),
+                    now + 0.1
                 );
             }
             
@@ -595,18 +612,19 @@
                         await this.audioContext.resume();
                     }
                     
+                    const now = this.audioContext.currentTime;
+                    
                     if (this.isPlaying) {
                         // Smooth fade out
-                        const now = this.audioContext.currentTime;
                         this.masterGain.gain.cancelScheduledValues(now);
-                        this.masterGain.gain.setTargetAtTime(0, now, 0.5);
+                        this.masterGain.gain.setTargetAtTime(0, now, this.fadeTime);
                         this.isPlaying = false;
                         this.updateTimer(false);
                     } else {
                         // Smooth fade in
-                        const now = this.audioContext.currentTime;
                         this.masterGain.gain.cancelScheduledValues(now);
-                        this.masterGain.gain.setTargetAtTime(this.volume, now, 1.0);
+                        this.masterGain.gain.setValueAtTime(0, now);
+                        this.masterGain.gain.setTargetAtTime(this.volume, now, this.fadeTime);
                         this.isPlaying = true;
                         this.sessionStart = this.sessionStart || this.audioContext.currentTime;
                         this.updateTimer(true);
